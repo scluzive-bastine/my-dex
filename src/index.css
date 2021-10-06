@@ -1,13 +1,172 @@
+:root {
+  --primary: #376a67;
+  --secondary: #0c1817;
+  --light: #b0d0ce;
+}
 body {
+  height: 100vh;
+  background: linear-gradient(291.34deg, rgba(3, 37, 35, 0.86) 0%, #000000 100%);
+  background-repeat: no-repeat;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.connectedWalletInfo {
+  background-color: var(--light);
+  width: auto;
+  height: 42px;
+  display: flex;
+  border-radius: 20px;
+}
+.connectedWallet,
+.walletAddress {
+  padding: 2px 20px;
+  font-weight: 600;
+  color: #fff;
+}
+.walletAddress {
+  background-color: var(--primary);
+  border-radius: 20px;
+}
+.connectedWalletInfo div {
+  display: flex;
+  align-items: center;
+}
+#webSettingsDropdwon .dropdown-toggle::after {
+  display: none !important;
+}
+#webSettingsDropdwon .btn-primary {
+  background: transparent;
+  color: var(--light);
+  border-color: transparent;
+}
+#webSettingsDropdwon .btn-primary:focus {
+  box-shadow: none;
+}
+.dropdown-menu[data-bs-popper] {
+  left: auto !important;
+  right: 0;
+  border-radius: 10px;
+  background-color: var(--light);
+}
+.webSettingsContainer {
+  background-color: var(--secondary);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+.webSettingsContainer h5 {
+  margin-bottom: 0;
+}
+.wbsToggleIcon {
+  width: 40px;
+  height: 40px;
+  fill: #fff !important;
+}
+.wbsSelectLanguage {
+  width: 40px;
+  height: 40px;
+  fill: var(--light);
+}
+.webSettingsContainer p {
+  font-size: 10px;
+}
+.webSettingsContainer svg {
+  fill: var(--light);
+}
+.swapContainer {
+  background-color: var(--primary);
+  color: #fff;
+  padding: 20px;
+  border-radius: 24px;
+  position: relative;
+}
+/* .swapContainerBody::after {
+  content: '';
+  width: 30px;
+  height: 30px;
+  background: var(--light);
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 50px;
+} */
+.swpChangeIcon {
+  width: 30px;
+  height: 30px;
+  background: var(--light);
+  border-radius: 50px;
+  margin-top: -1rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.swapFrom {
+  background-color: var(--secondary);
+  border-radius: 16px;
+  padding: 1rem;
+}
+.swapTo {
+  border: 1px solid var(--light);
+  border-radius: 16px;
+  padding: 1rem;
+  margin-top: -0.5rem;
+}
+.swpBoxImage {
+  width: 23px;
+  height: 23px;
+  margin-right: 10px;
+}
+.spwfHeader h6,
+.swpfFooter h6 {
+  color: var(--light);
+  font-size: 0.8rem;
+}
+.swpBoxImage img {
+  /* width: 100%; */
+}
+.swpBoxText {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.swpSelectBox svg {
+  fill: #fff;
+  margin-left: 5px;
+}
+.swpSelectBox {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.swapContainer .swapInput {
+  background: transparent;
+  text-align: right;
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+}
+.swapContainer .swapInput:focus {
+  background: transparent;
+  box-shadow: none;
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+}
+@media (min-width: 992px) {
+  .navbar-expand-lg .navbar-nav .dropdown-menu {
+    min-width: 420px;
+  }
 }
