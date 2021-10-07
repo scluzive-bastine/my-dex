@@ -6,11 +6,12 @@ import { BsFillMoonStarsFill, BsToggleOn, BsToggleOff } from 'react-icons/bs'
 import { MdKeyboardArrowRight } from 'react-icons/md'
 import { IoLanguageSharp } from 'react-icons/io5'
 
-const Navigation = () => {
+const Navigation = ({ user, login, logout, truncate, balance }) => {
   const [show, setShow] = useState(false)
 
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
+  const dummyAddress = '0x9465...5491'
   return (
     <Navbar expand='lg'>
       <Container>
@@ -26,10 +27,19 @@ const Navigation = () => {
                   <div className='walletImage'>
                     <img src={Metamask} />
                   </div>
-                  <span className='ms-2 me-1'>0.0038 </span> <span>ETH</span>
+                  <span className='ms-2 me-1'>{balance} </span> <span>ETH</span>
                 </div>
               </div>
-              <div className='walletAddress'>0x957d...de94</div>
+              {!user && (
+                <div className='walletAddress cursor-pointer' onClick={login}>
+                  Connect Wallet
+                </div>
+              )}
+              {user && (
+                <div className='walletAddress'>
+                  {truncate(user.attributes.accounts[0], 5, 4, 12)}
+                </div>
+              )}
             </div>
             <Dropdown id='webSettingsDropdwon' drop='down'>
               <Dropdown.Toggle id='dropdown-basic' className='nav-link'>

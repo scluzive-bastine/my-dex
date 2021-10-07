@@ -165,6 +165,49 @@ code {
   color: #fff;
   font-weight: 600;
 }
+.swapPriceContainer {
+  position: relative;
+  background-color: var(--secondary);
+  padding: 1rem;
+  border-radius: 16px;
+}
+.swapPrice {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+.swapPrice h6 {
+  font-weight: 600;
+  font-size: 20px;
+}
+.swapTxCost {
+  font-size: 0.75rem;
+  color: var(--light);
+}
+.gasFeeContainer {
+  background-color: #093835;
+  color: #fff;
+  width: fit-content;
+  padding: 0.5rem;
+  border-radius: 20px 20px 20px 0px;
+  position: absolute;
+  top: -18px;
+  left: 0;
+  font-size: 0.75rem;
+}
+.swapContainer .swapButton {
+  width: 100%;
+  margin-top: 1rem;
+  background: var(--secondary);
+  border-radius: 10px;
+  border-color: transparent;
+  transition: all 0.2s ease;
+}
+.swapContainer .swapButton:hover {
+  background: #1c3735;
+  box-shadow: none;
+  border-color: transparent;
+}
 @media (min-width: 992px) {
   .navbar-expand-lg .navbar-nav .dropdown-menu {
     min-width: 420px;
