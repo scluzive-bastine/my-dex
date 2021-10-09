@@ -2,6 +2,7 @@
   --primary: #376a67;
   --secondary: #0c1817;
   --light: #b0d0ce;
+  --border-radius: 24px;
 }
 body {
   height: 100vh;
@@ -149,7 +150,11 @@ code {
   display: flex;
   align-items: center;
   height: 100%;
+  cursor: pointer;
 }
+/* .swpSelectBox:hover {
+  background: #eee;
+} */
 
 .swapContainer .swapInput {
   background: transparent;
@@ -207,6 +212,80 @@ code {
   background: #1c3735;
   box-shadow: none;
   border-color: transparent;
+}
+.tokenModal .modal-dialog {
+  display: flex;
+  justify-content: center;
+  margin-top: 6rem;
+}
+.tokenModal .modal-content {
+  border-radius: 16px;
+  width: 418px;
+  height: 590px;
+  background-color: var(--light);
+  /* overflow-x: scroll; */
+}
+.tokenModal .modal-header {
+  border-color: var(--primary);
+  padding: 0.5rem 1.5rem;
+}
+.tokenModal .modal-header .modal-title {
+  font-weight: 600;
+  font-size: 20px;
+  text-align: center;
+}
+.tokenContainer {
+  overflow-x: scroll;
+  height: 420px;
+}
+.tokenModal .modal-content .modal-body {
+  padding: 0;
+}
+.tokenModal .modal-content .modal-body .form-control {
+  background: var(--secondary);
+  border-color: var(--light);
+  color: #fff;
+  padding: 0.675rem 0.75rem;
+  border-radius: 12px;
+}
+.tokenModal .modal-content .modal-body .form-control:focus {
+  box-shadow: none;
+  border-color: var(--primary);
+  color: #fff;
+}
+.tokens {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+.tokens:hover {
+  background-color: var(--primary);
+}
+.tokens:hover .tokenName small {
+  color: #000000;
+}
+.tokenImage {
+  width: 40px;
+  height: 40px;
+}
+.tokenImage img {
+  width: 100%;
+}
+.tokenName {
+  margin-left: 10px;
+}
+.tokenName h6 {
+  font-weight: 700;
+}
+.tokenName small {
+  font-size: 12px;
+  color: var(--primary);
+}
+.searchToken {
+  padding: 1rem;
 }
 @media (min-width: 992px) {
   .navbar-expand-lg .navbar-nav .dropdown-menu {

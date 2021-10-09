@@ -8,6 +8,7 @@ import { IoLanguageSharp } from 'react-icons/io5'
 
 const Navigation = ({ user, login, logout, truncate, balance }) => {
   const [show, setShow] = useState(false)
+  // console.log(isNaN(balance))
 
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)

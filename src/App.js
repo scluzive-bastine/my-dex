@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Button } from 'react-bootstrap'
+import { Container, Button, Modal } from 'react-bootstrap'
 import Navigation from './components/Navigation'
 import { MdKeyboardArrowDown, MdArrowDownward } from 'react-icons/md'
 import Eth from './Eth.svg'
 import Dai from './Dai.svg'
 import Moralis from 'moralis'
 import { ethers } from 'ethers'
+import TokensModal from './components/TokensModal'
 
 Moralis.initialize(process.env.REACT_APP_MORALIS_APPLICATION_ID)
 Moralis.serverURL = process.env.REACT_APP_MORALIS_SERVER_URL
@@ -14,17 +15,32 @@ const initialUser = Moralis.User.current()
 function App() {
   const [balance, setBalance] = useState(0)
   const [balanceInWei, setBalanceInWei] = useState(0)
+  const [show, setShow] = useState(false)
+  const [currentSide, setCurrentSide] = useState('')
+  const [tokens, setTokens] = useState([])
+  const [isLoading, setisLoading] = useState(true)
+  let modal
+
   const init = async () => {
     await Moralis.initPlugins()
     await Moralis.enable()
-    setBalance(await Moralis.Web3API.account.getNativeBalance())
-    // const transactions = await Moralis.Web3API.account.getTransactions()
-    const bWei = parseFloat(ethers.utils.formatEther(balance.balance)).toPrecision(4)
+    const b = await Moralis.Web3API.account.getNativeBalance()
+    setBalance(b.balance)
+    const bWei = parseFloat((b.balance / 1000000000000000000).toFixed(4))
     setBalanceInWei(bWei)
+    setisLoading(true)
+    const result = await Moralis.Plugins.oneInch.getSupportedTokens({
+      chain: 'eth',
+    })
+    setTokens(result)
+    setisLoading(false)
   }
   useEffect(() => {
     init()
   }, [])
+
+  const handleClose = () => setShow(false)
+  const handleShow = () => setShow(true)
 
   const [user, setUser] = useState(initialUser)
 
@@ -44,6 +60,24 @@ function App() {
       return start + '...' + end
     }
     return text
+  }
+
+  // ;<TokensModal show={show} handleClose={handleClose} tokens={tokens}></TokensModal>
+  if (isLoading) {
+    return (
+      <Container fluid>
+        <Navigation
+          user={user}
+          login={handleLogin}
+          logOut={handleLogout}
+          truncate={truncate}
+          balance={balanceInWei}
+        ></Navigation>
+        <Container className='mt-5'>
+          <h6 className='text-center'>Loading...</h6>
+        </Container>
+      </Container>
+    )
   }
 
   return (
@@ -72,7 +106,7 @@ function App() {
                     <div className=''>
                       <div className='row'>
                         <div className='col-12 col-sm-12 col-md-3'>
-                          <div className='swpSelectBox'>
+                          <div className='swpSelectBox' id='from_token_select' onClick={handleShow}>
                             <div className='swpBoxImage'>
                               <img src={Eth} alt='' srcset='' />
                             </div>
@@ -166,6 +200,7 @@ function App() {
             </div>
           </div>
         </div>
+        <TokensModal show={show} handleClose={handleClose} tokens={tokens}></TokensModal>
       </Container>
     </Container>
   )
