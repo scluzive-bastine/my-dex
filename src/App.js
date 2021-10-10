@@ -16,10 +16,17 @@ function App() {
   const [balance, setBalance] = useState(0)
   const [balanceInWei, setBalanceInWei] = useState(0)
   const [show, setShow] = useState(false)
-  const [currentSide, setCurrentSide] = useState('')
   const [tokens, setTokens] = useState([])
   const [isLoading, setisLoading] = useState(true)
-  let modal
+  const [user, setUser] = useState(initialUser)
+  const [currentSide, setCurrentSide] = useState('')
+  // const [currentTrade, setCurrentTrade] = useState({})
+  const [trade, setTrade] = useState({})
+  const [tokenSelected, setTokenSelected] = useState([])
+  const [address, setAddress] = useState()
+  console.log(trade.from)
+  // console.log(currentSide)
+  // console.log(currentTrade)
 
   const init = async () => {
     await Moralis.initPlugins()
@@ -35,23 +42,48 @@ function App() {
     setTokens(result)
     setisLoading(false)
   }
-  useEffect(() => {
-    init()
-  }, [])
 
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
+  const handleClose = () => {
+    setShow(false)
+  }
 
-  const [user, setUser] = useState(initialUser)
+  const showTrade = (trd) => {
+    setTrade(trd)
+  }
+
+  const handleShow = (side) => {
+    setShow(true)
+    setCurrentSide(side)
+  }
 
   const handleLogin = async () => {
     const loggedIn = await Moralis.authenticate()
     setUser(loggedIn)
   }
+
   const handleLogout = async () => {
     Moralis.User.logOut()
     setUser(null)
   }
+
+  // To find a specific object in an array of objects
+  // const selectToken = async (address) => {
+  //   handleClose()
+  //   const a = Object.values(tokens).find((obj) => {
+  //     setTokenSelected(obj[address])
+  //   })
+  //   setCurrentTrade({ ...currentTrade, [currentSide]: tokenSelected })
+  // }
+
+  // const selectToken = async (address) => {
+  //   handleClose()
+  //   const a = Object.values(tokens).find((obj) => {
+  //     setTokenSelected(obj[address])
+  //   })
+  //   setCurrentTrade({ ...currentTrade, [currentSide]: tokenSelected })
+  // }
+
+  const renderClickedToken = () => {}
 
   const truncate = (text, startChars, endChars, maxLength) => {
     if (text.length > maxLength) {
@@ -61,8 +93,9 @@ function App() {
     }
     return text
   }
-
-  // ;<TokensModal show={show} handleClose={handleClose} tokens={tokens}></TokensModal>
+  useEffect(() => {
+    init()
+  }, [])
   if (isLoading) {
     return (
       <Container fluid>
@@ -106,12 +139,22 @@ function App() {
                     <div className=''>
                       <div className='row'>
                         <div className='col-12 col-sm-12 col-md-3'>
-                          <div className='swpSelectBox' id='from_token_select' onClick={handleShow}>
+                          <div
+                            className='swpSelectBox'
+                            id='from_token_select'
+                            onClick={() => handleShow('from')}
+                          >
                             <div className='swpBoxImage'>
-                              <img src={Eth} alt='' srcset='' />
+                              <img
+                                src={trade.from ? trade.from.logoURI : Eth}
+                                alt={trade.from ? trade.from.name : 'Ethereum'}
+                                srcset={trade.from ? trade.from.logoURI : Eth}
+                              />
                             </div>
                             <div className='d-flex align-items-center'>
-                              <div className='swpBoxText'>Eth</div>
+                              <div className='swpBoxText'>
+                                {trade.from ? trade.from.symbol : 'ETH'}
+                              </div>
                               <MdKeyboardArrowDown />
                             </div>
                           </div>
@@ -123,7 +166,7 @@ function App() {
                     </div>
                   </div>
                   <div className='swpfFooter mt-2 d-flex justify-content-between'>
-                    <h6>Ethereum</h6>
+                    <h6>{trade.from ? trade.from.name : 'Ethereum'}</h6>
                     <h6>
                       ~ $<span>3,420</span>
                     </h6>
@@ -141,12 +184,16 @@ function App() {
                     <div className=''>
                       <div className='row'>
                         <div className='col-12 col-sm-12 col-md-3'>
-                          <div className='swpSelectBox'>
+                          <div className='swpSelectBox' onClick={() => handleShow('to')}>
                             <div className='swpBoxImage'>
-                              <img src={Dai} alt='' srcset='' />
+                              <img
+                                src={trade.to ? trade.to.logoURI : Dai}
+                                alt={trade.to ? trade.to.symbol : 'Dai'}
+                                srcset={trade.to ? trade.to.logoURI : Dai}
+                              />
                             </div>
                             <div className='d-flex align-items-center'>
-                              <div className='swpBoxText'>Eth</div>
+                              <div className='swpBoxText'>{trade.to ? trade.to.symbol : 'Dai'}</div>
                               <MdKeyboardArrowDown />
                             </div>
                           </div>
@@ -200,7 +247,14 @@ function App() {
             </div>
           </div>
         </div>
-        <TokensModal show={show} handleClose={handleClose} tokens={tokens}></TokensModal>
+        <TokensModal
+          show={show}
+          handleClose={handleClose}
+          tokens={tokens}
+          currentSide={currentSide}
+          showTrade={showTrade}
+          // selectToken={selectToken}
+        ></TokensModal>
       </Container>
     </Container>
   )

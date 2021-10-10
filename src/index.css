@@ -134,7 +134,8 @@ code {
   font-size: 0.8rem;
 }
 .swpBoxImage img {
-  /* width: 100%; */
+  width: 23px;
+  height: 23px;
 }
 .swpBoxText {
   color: #fff;
