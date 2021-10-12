@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import Eth from '../Eth.svg'
 
-const TokensModal = ({ show, handleClose, tokens, currentSide, showTrade }) => {
+const TokensModal = ({ show, handleClose, tokens, currentSide, showTrade, trade }) => {
   const newTokens = Object.entries(tokens)
   const tk = newTokens[0][1]
   const [search, setSearch] = useState('')
@@ -10,7 +10,22 @@ const TokensModal = ({ show, handleClose, tokens, currentSide, showTrade }) => {
 
   // const [currentSide, setCurrentSide] = useState('')
 
-  const [currentTrade, setCurrentTrade] = useState({})
+  // const [currentTrade, setCurrentTrade] = useState({
+  //   from: {
+  //     address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+  //     decimals: 18,
+  //     logoURI: 'https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+  //     name: 'Ethereum',
+  //     symbol: 'ETH',
+  //   },
+  //   to: {
+  //     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+  //     decimals: 18,
+  //     logoURI: 'https://tokens.1inch.io/0x6b175474e89094c44da98b954eedeac495271d0f.png',
+  //     name: 'Dai Stablecoin',
+  //     symbol: 'DAI',
+  //   },
+  // })
   const [tokenSelected, setTokenSelected] = useState([])
 
   // console.log(address)
@@ -25,15 +40,13 @@ const TokensModal = ({ show, handleClose, tokens, currentSide, showTrade }) => {
   //   setCurrentTrade({ ...currentTrade, [currentSide]: tokenSelected })
   // }
 
-  const renderInterface = () => {}
-
   useEffect(() => {
     handleClose()
-    const a = Object.values(tk).find((obj) => {
+    Object.values(tk).find((obj) => {
       setTokenSelected(obj[address])
     })
-    setCurrentTrade({ ...currentTrade, [currentSide]: tk[address] })
-    showTrade({ ...currentTrade, [currentSide]: tk[address] })
+    // setCurrentTrade({ ...trade, [currentSide]: tk[address] })
+    showTrade({ ...trade, [currentSide]: tk[address] })
   }, [address])
 
   // console.log(tk[0x0a50c93c762fdd6e56d86215c24aaad43ab629aa])

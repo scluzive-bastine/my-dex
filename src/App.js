@@ -20,21 +20,45 @@ function App() {
   const [isLoading, setisLoading] = useState(true)
   const [user, setUser] = useState(initialUser)
   const [currentSide, setCurrentSide] = useState('')
-  // const [currentTrade, setCurrentTrade] = useState({})
-  const [trade, setTrade] = useState({})
+
+  const [trade, setTrade] = useState({
+    from: {
+      address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+      decimals: 18,
+      logoURI: 'https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+      name: 'Ethereum',
+      symbol: 'ETH',
+    },
+    to: {
+      address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+      decimals: 18,
+      logoURI: 'https://tokens.1inch.io/0x6b175474e89094c44da98b954eedeac495271d0f.png',
+      name: 'Dai Stablecoin',
+      symbol: 'DAI',
+    },
+  })
+  // console.log(trade)
   const [tokenSelected, setTokenSelected] = useState([])
   const [address, setAddress] = useState()
-  console.log(trade.from)
-  // console.log(currentSide)
-  // console.log(currentTrade)
+  const [amount, setAmount] = useState(1)
+  const [quote, setQuote] = useState({})
+  // console.log(trade)
 
   const init = async () => {
     await Moralis.initPlugins()
     await Moralis.enable()
-    const b = await Moralis.Web3API.account.getNativeBalance()
-    setBalance(b.balance)
-    const bWei = parseFloat((b.balance / 1000000000000000000).toFixed(4))
-    setBalanceInWei(bWei)
+    if (user) {
+      const b = await Moralis.Web3API.account.getNativeBalance()
+      console.log(b)
+      setBalance(b.balance)
+      const bWei = parseFloat((b.balance / 1000000000000000000).toFixed(4))
+      setBalanceInWei(bWei)
+
+      const getTkBalances = await Moralis.Web3API.account.getTokenBalances({
+        chain: 'eth',
+      })
+      console.log(getTkBalances)
+    }
     setisLoading(true)
     const result = await Moralis.Plugins.oneInch.getSupportedTokens({
       chain: 'eth',
@@ -83,7 +107,26 @@ function App() {
   //   setCurrentTrade({ ...currentTrade, [currentSide]: tokenSelected })
   // }
 
-  const renderClickedToken = () => {}
+  useEffect(() => {
+    const delayGetQoute = setTimeout(() => {
+      const qut = async () => {
+        if (trade.from && trade.to && amount) {
+          const amt = amount * 10 ** trade.from.decimals
+          const price = await Moralis.Plugins.oneInch.quote({
+            chain: 'eth', // The blockchain you want to use (eth/bsc/polygon)
+            fromTokenAddress: trade.from.address, // The token you want to swap
+            toTokenAddress: trade.to.address, // The token you want to receive
+            amount: amt,
+          })
+          setQuote(price)
+        }
+      }
+      qut()
+    }, 1000)
+    return () => {
+      clearTimeout(delayGetQoute)
+    }
+  }, [trade, amount])
 
   const truncate = (text, startChars, endChars, maxLength) => {
     if (text.length > maxLength) {
@@ -93,9 +136,72 @@ function App() {
     }
     return text
   }
+
+  const calcQuote = (toToken, toTokenDecimals) => {
+    return parseFloat(toToken / 10 ** toTokenDecimals).toFixed(2)
+  }
+
+  const switchTrade = () => {
+    const t = {
+      from: {
+        address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+        decimals: 18,
+        logoURI: 'https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+        name: 'Ethereum',
+        symbol: 'ETH',
+      },
+      to: {
+        address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+        decimals: 18,
+        logoURI: 'https://tokens.1inch.io/0x6b175474e89094c44da98b954eedeac495271d0f.png',
+        name: 'Dai Stablecoin',
+        symbol: 'DAI',
+      },
+    }
+  }
   useEffect(() => {
     init()
   }, [])
+
+  const trySwap = async () => {
+    let address = Moralis.User.current().get('ethAddress')
+    let amt = amount * 10 ** trade.from.decimals
+    if (trade.from.symbol !== 'ETH') {
+      const allowance = await Moralis.Plugins.oneInch.hasAllowance({
+        chain: 'eth', // The blockchain you want to use (eth/bsc/polygon)
+        fromTokenAddress: trade.from.address, // The token you want to swap
+        fromAddress: address, // Your wallet address
+        amount: amt,
+      })
+      console.log(allowance)
+      if (!allowance) {
+        // const approve = async () => {
+        await Moralis.Plugins.oneInch.approve({
+          chain: 'eth', // The blockchain you want to use (eth/bsc/polygon)
+          tokenAddress: trade.from.address, // The token you want to swap
+          fromAddress: address, // Your wallet address
+        })
+        // console.log(result)
+        // }
+        // approve()
+      }
+    }
+    let reciept = await swap(address, amt)
+    console.log(reciept)
+    alert('swap completed')
+  }
+
+  const swap = (address, amount) => {
+    return Moralis.Plugins.oneInch.swap({
+      chain: 'eth', // The blockchain you want to use (eth/bsc/polygon)
+      fromTokenAddress: trade.from.address, // The token you want to swap
+      toTokenAddress: trade.to.address, // The token you want to receive
+      amount: amount,
+      fromAddress: address, // Your wallet address
+      slippage: 1,
+    })
+  }
+
   if (isLoading) {
     return (
       <Container fluid>
@@ -146,21 +252,32 @@ function App() {
                           >
                             <div className='swpBoxImage'>
                               <img
-                                src={trade.from ? trade.from.logoURI : Eth}
-                                alt={trade.from ? trade.from.name : 'Ethereum'}
-                                srcset={trade.from ? trade.from.logoURI : Eth}
+                                src={trade.from.logoURI}
+                                alt={trade.from ? trade.from.name : ''}
+                                srcSet={trade.from ? trade.from.logoURI : ''}
                               />
                             </div>
                             <div className='d-flex align-items-center'>
                               <div className='swpBoxText'>
-                                {trade.from ? trade.from.symbol : 'ETH'}
+                                {trade.from ? trade.from.symbol : ''}
                               </div>
                               <MdKeyboardArrowDown />
                             </div>
                           </div>
                         </div>
                         <div className='col-12 col-sm-12 col-md-9'>
-                          <input type='text' className='form-control swapInput' autoFocus />
+                          <input
+                            type='text'
+                            className='form-control swapInput'
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            autoFocus
+                            placeholder='0.0'
+                            inputMode='decimal'
+                            autoComplete='off'
+                            autoCorrect='off'
+                            pattern='^[0-9]*[.,]?[0-9]*$'
+                          />
                         </div>
                       </div>
                     </div>
@@ -173,7 +290,7 @@ function App() {
                   </div>
                 </div>
                 <div className='swpChangeIcon'>
-                  <MdArrowDownward />
+                  <MdArrowDownward onClick={switchTrade} />
                 </div>
                 <div className='swapTo'>
                   <div className='spwfHeader d-flex justify-content-between'>
@@ -189,7 +306,7 @@ function App() {
                               <img
                                 src={trade.to ? trade.to.logoURI : Dai}
                                 alt={trade.to ? trade.to.symbol : 'Dai'}
-                                srcset={trade.to ? trade.to.logoURI : Dai}
+                                srcSet={trade.to ? trade.to.logoURI : Dai}
                               />
                             </div>
                             <div className='d-flex align-items-center'>
@@ -206,14 +323,18 @@ function App() {
                   </div>
                   <div className='swapPriceContainer mt-4'>
                     <div className='gasFeeContainer'>
-                      Gas Fee: $<span>50.21</span>
+                      Gas Fee: <span>{quote ? quote.estimatedGas : ''}</span>
                     </div>
                     <div className='swapPrice'>
                       <div>
                         <h6>1inch</h6>
                       </div>
                       <div className=''>
-                        <h6 className='mb-0'>3,591</h6>
+                        <h6 className='mb-0' id='swpRecQuote'>
+                          {quote.toToken
+                            ? calcQuote(quote.toTokenAmount, quote.toToken.decimals)
+                            : ''}
+                        </h6>
                       </div>
                     </div>
                     <div className='swapTxCost d-flex justify-content-between'>
@@ -241,7 +362,7 @@ function App() {
                   </div>
                 </div>
               </div>
-              <Button variant='primary' className='swapButton' size='lg'>
+              <Button variant='primary' className='swapButton' size='lg' onClick={trySwap}>
                 Swap token
               </Button>
             </div>
@@ -253,6 +374,7 @@ function App() {
           tokens={tokens}
           currentSide={currentSide}
           showTrade={showTrade}
+          trade={trade}
           // selectToken={selectToken}
         ></TokensModal>
       </Container>

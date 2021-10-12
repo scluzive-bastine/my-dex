@@ -26,6 +26,9 @@ code {
   display: flex;
   border-radius: 20px;
 }
+#walletBtn {
+  cursor: pointer;
+}
 .connectedWallet,
 .walletAddress {
   padding: 2px 20px;

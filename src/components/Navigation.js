@@ -2,17 +2,14 @@ import React, { useState } from 'react'
 import { Navbar, Dropdown, Nav, Container } from 'react-bootstrap'
 import Metamask from '../Metamask.svg'
 import { FiSettings } from 'react-icons/fi'
-import { BsFillMoonStarsFill, BsToggleOn, BsToggleOff } from 'react-icons/bs'
+import { BsFillMoonStarsFill, BsToggleOn, BsToggleOff, BsPower } from 'react-icons/bs'
 import { MdKeyboardArrowRight } from 'react-icons/md'
 import { IoLanguageSharp } from 'react-icons/io5'
 
-const Navigation = ({ user, login, logout, truncate, balance }) => {
+const Navigation = ({ user, login, logOut, truncate, balance }) => {
   const [show, setShow] = useState(false)
   // console.log(isNaN(balance))
 
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
-  const dummyAddress = '0x9465...5491'
   return (
     <Navbar expand='lg'>
       <Container>
@@ -28,11 +25,11 @@ const Navigation = ({ user, login, logout, truncate, balance }) => {
                   <div className='walletImage'>
                     <img src={Metamask} />
                   </div>
-                  <span className='ms-2 me-1'>{balance} </span> <span>ETH</span>
+                  <span className='ms-2 me-1'>{user ? balance : 0} </span> <span>ETH</span>
                 </div>
               </div>
               {!user && (
-                <div className='walletAddress cursor-pointer' onClick={login}>
+                <div className='walletAddress' id='walletBtn' onClick={login}>
                   Connect Wallet
                 </div>
               )}
@@ -77,6 +74,7 @@ const Navigation = ({ user, login, logout, truncate, balance }) => {
                 </div>
               </Dropdown.Menu>
             </Dropdown>
+            <BsPower onClick={logOut} id='walletBtn'></BsPower>
           </Nav>
         </Navbar.Collapse>
       </Container>
