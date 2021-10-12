@@ -47,6 +47,7 @@ const TokensModal = ({ show, handleClose, tokens, currentSide, showTrade, trade 
     })
     // setCurrentTrade({ ...trade, [currentSide]: tk[address] })
     showTrade({ ...trade, [currentSide]: tk[address] })
+    console.log(trade)
   }, [address])
 
   // console.log(tk[0x0a50c93c762fdd6e56d86215c24aaad43ab629aa])

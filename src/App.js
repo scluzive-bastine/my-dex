@@ -54,10 +54,10 @@ function App() {
       const bWei = parseFloat((b.balance / 1000000000000000000).toFixed(4))
       setBalanceInWei(bWei)
 
-      const getTkBalances = await Moralis.Web3API.account.getTokenBalances({
-        chain: 'eth',
-      })
-      console.log(getTkBalances)
+      const options = { chain: 'eth', address: '0x609c711783295209d9f33f535a7ca55b8ff87af2' }
+      const getTkBalances = await Moralis.Web3API.account.getTokenBalances()
+      const tollBalance = getTkBalances[1]['balance'] / 1000000000000000000
+      console.log(tollBalance)
     }
     setisLoading(true)
     const result = await Moralis.Plugins.oneInch.getSupportedTokens({
@@ -316,7 +316,8 @@ function App() {
                           </div>
                         </div>
                         <div className='col-12 col-sm-12 col-md-9'>
-                          <input type='text' className='form-control swapInput' />
+                          {/* <input type='text' className='form-control swapInput' readOnly/> */}
+                          <div></div>
                         </div>
                       </div>
                     </div>
@@ -338,26 +339,10 @@ function App() {
                       </div>
                     </div>
                     <div className='swapTxCost d-flex justify-content-between'>
-                      <div>Tx cost 0.0021</div>
-                      <div>
+                      <div>Protocol</div>
+                      {/* <div>
                         ~$<span>3,591</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='swapPriceContainer mt-2'>
-                    <div className='swapPrice'>
-                      <div>
-                        <h6>SushiSwap</h6>
-                      </div>
-                      <div className=''>
-                        <h6 className='mb-0'>3,591</h6>
-                      </div>
-                    </div>
-                    <div className='swapTxCost d-flex justify-content-between'>
-                      <div>Tx cost 0.0022</div>
-                      <div>
-                        ~$<span>3,591</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
