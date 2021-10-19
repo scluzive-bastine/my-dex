@@ -42,6 +42,10 @@ function App() {
   const [address, setAddress] = useState()
   const [amount, setAmount] = useState(1)
   const [quote, setQuote] = useState({})
+  const [tokenBalance, setTokenBalance] = useState({
+    from: 0,
+    to: 0,
+  })
   // console.log(trade)
 
   const init = async () => {
@@ -49,7 +53,7 @@ function App() {
     await Moralis.enable()
     if (user) {
       const b = await Moralis.Web3API.account.getNativeBalance()
-      console.log(b)
+      // console.log(b)
       setBalance(b.balance)
       const bWei = parseFloat((b.balance / 1000000000000000000).toFixed(4))
       setBalanceInWei(bWei)
@@ -57,7 +61,7 @@ function App() {
       const options = { chain: 'eth', address: '0x609c711783295209d9f33f535a7ca55b8ff87af2' }
       const getTkBalances = await Moralis.Web3API.account.getTokenBalances()
       const tollBalance = getTkBalances[1]['balance'] / 1000000000000000000
-      console.log(tollBalance)
+      // console.log(tollBalance)
     }
     setisLoading(true)
     const result = await Moralis.Plugins.oneInch.getSupportedTokens({
@@ -119,6 +123,43 @@ function App() {
             amount: amt,
           })
           setQuote(price)
+          // get wallet balance
+          // get mainnet native balance for the current user
+
+          // get Token balance for a given address
+          const nativeBalance = await Moralis.Web3API.account.getNativeBalance()
+          if (trade.from.name == 'Ethereum') {
+            setTokenBalance({
+              ...tokenBalance,
+              from: nativeBalance.balance,
+            })
+          } else if (trade.to.name == 'Ethereum') {
+            setTokenBalance({
+              ...tokenBalance,
+              to: nativeBalance.balance,
+            })
+          } else {
+            const bal = await Moralis.Web3API.account.getTokenBalances()
+            const foundFrom = bal.find((token) => token.name == trade.from.name)
+            const foundTo = bal.find((token) => token.name == trade.to.name)
+            console.log(typeof foundTo)
+            if (typeof foundFrom !== 'undefined') {
+              setTokenBalance({
+                ...tokenBalance,
+                from: foundFrom.balance,
+              })
+            } else if (typeof foundTo !== 'undefined') {
+              setTokenBalance({
+                ...tokenBalance,
+                to: foundTo.balance,
+              })
+            } else {
+              setTokenBalance({ ...tokenBalance })
+            }
+          }
+          // console.log(tokenBalance)
+          // console.log(tokenBalance)
+          // console.log(parseFloat(bal.balance / 1000000000000000000).toFixed(4))
         }
       }
       qut()
@@ -159,7 +200,7 @@ function App() {
       },
     }
   }
-  useEffect(() => {
+  useEffect(async () => {
     init()
   }, [])
 
