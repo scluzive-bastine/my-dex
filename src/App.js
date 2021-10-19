@@ -110,7 +110,9 @@ function App() {
   //   })
   //   setCurrentTrade({ ...currentTrade, [currentSide]: tokenSelected })
   // }
-
+  useEffect(async () => {
+    init()
+  }, [])
   useEffect(() => {
     const delayGetQoute = setTimeout(() => {
       const qut = async () => {
@@ -127,36 +129,36 @@ function App() {
           // get mainnet native balance for the current user
 
           // get Token balance for a given address
-          const nativeBalance = await Moralis.Web3API.account.getNativeBalance()
-          if (trade.from.name == 'Ethereum') {
-            setTokenBalance({
-              ...tokenBalance,
-              from: nativeBalance.balance,
-            })
-          } else if (trade.to.name == 'Ethereum') {
-            setTokenBalance({
-              ...tokenBalance,
-              to: nativeBalance.balance,
-            })
-          } else {
-            const bal = await Moralis.Web3API.account.getTokenBalances()
-            const foundFrom = bal.find((token) => token.name == trade.from.name)
-            const foundTo = bal.find((token) => token.name == trade.to.name)
-            console.log(typeof foundTo)
-            if (typeof foundFrom !== 'undefined') {
-              setTokenBalance({
-                ...tokenBalance,
-                from: foundFrom.balance,
-              })
-            } else if (typeof foundTo !== 'undefined') {
-              setTokenBalance({
-                ...tokenBalance,
-                to: foundTo.balance,
-              })
-            } else {
-              setTokenBalance({ ...tokenBalance })
-            }
-          }
+          // const nativeBalance = await Moralis.Web3API.account.getNativeBalance()
+          // if (trade.from.name == 'Ethereum') {
+          //   setTokenBalance({
+          //     ...tokenBalance,
+          //     from: nativeBalance.balance,
+          //   })
+          // } else if (trade.to.name == 'Ethereum') {
+          //   setTokenBalance({
+          //     ...tokenBalance,
+          //     to: nativeBalance.balance,
+          //   })
+          // } else {
+          //   const bal = await Moralis.Web3API.account.getTokenBalances()
+          //   const foundFrom = bal.find((token) => token.name == trade.from.name)
+          //   const foundTo = bal.find((token) => token.name == trade.to.name)
+          //   console.log(typeof foundTo)
+          //   if (typeof foundFrom !== 'undefined') {
+          //     setTokenBalance({
+          //       ...tokenBalance,
+          //       from: foundFrom.balance,
+          //     })
+          //   } else if (typeof foundTo !== 'undefined') {
+          //     setTokenBalance({
+          //       ...tokenBalance,
+          //       to: foundTo.balance,
+          //     })
+          //   } else {
+          //     setTokenBalance({ ...tokenBalance })
+          //   }
+          // }
           // console.log(tokenBalance)
           // console.log(tokenBalance)
           // console.log(parseFloat(bal.balance / 1000000000000000000).toFixed(4))
@@ -200,9 +202,6 @@ function App() {
       },
     }
   }
-  useEffect(async () => {
-    init()
-  }, [])
 
   const trySwap = async () => {
     let address = Moralis.User.current().get('ethAddress')
